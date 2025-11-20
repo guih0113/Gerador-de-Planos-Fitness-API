@@ -1,6 +1,7 @@
 import cors from '@fastify/cors'
 import Fastify from 'fastify'
-import { planRoutes } from './routes/plan'
+import { dietPlanRoutes } from './routes/diet-plan'
+import { trainingPlanRoutes } from './routes/training-plan'
 
 const app = Fastify()
 
@@ -13,7 +14,8 @@ app.get('/test', (_req, res) => {
   res.send('Hello World')
 })
 
-app.register(planRoutes)
+app.register(dietPlanRoutes)
+app.register(trainingPlanRoutes)
 
 app.listen({ port: Number(process.env.PORT) || 3333 }).then(() => {
   console.log('HTTP server running!')

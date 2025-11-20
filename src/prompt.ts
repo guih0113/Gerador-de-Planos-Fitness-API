@@ -1,6 +1,6 @@
-import type { DietPlanRequest } from './types'
+import type { DietPlanRequest, TrainingPlanRequest } from './types'
 
-export function buildSystemPrompt() {
+export function buildSystemPromptForDietPlan() {
   return [
     `Você é Nutri-AI, um agente de nutrição que cria planos semanais de dieta.
     Regras fixas:
@@ -16,7 +16,7 @@ export function buildSystemPrompt() {
   ].join('\n')
 }
 
-export function buildUserPrompt(input: DietPlanRequest) {
+export function buildUserPromptForDietPlan(input: DietPlanRequest) {
   return [
     'Gere um plano alimentar personalizado com base nos dados:',
     `- Nome: ${input.name}`,
@@ -29,6 +29,35 @@ export function buildUserPrompt(input: DietPlanRequest) {
   ].join('\n')
 }
 
-export function buildDocsSystemPrompt(doc: string) {
-  return `Documento técnico para ajudar na geração de dietas: ${doc}`
+export function buildSystemPromptForTrainingPlan() {
+  return [
+    `Você é Treino-AI, um agente que cria cronogramas de treinos de musculação personalizados.
+    Regras fixas:
+    - Sempre responda em texto markdown legível para humanos e em português do Brasil.
+    - Use # para títulos e - para itens de lista.
+    - Gere um programa com o número de sessões por semana solicitado pelo usuário (3x_week, 4x_week, 5x_week).
+    - Para cada sessão inclua: aquecimento, lista de exercícios (nome do exercício, séries x repetições ou duração), e sugestão de intervalo de descanso.
+    - Se o usuário tiver pouco equipamento, forneça alternativas sem equipamento ou com equipamentos básicos.
+    - Indique dias de descanso e recomendações de progressão semanal simples (ex.: aumentar carga ou repetições).
+    - Não inclua conselhos médicos; mantenha linguagem clara e prática.
+    - Não responda em JSON ou outro formato — apenas markdown humano.
+    - Sempre priorize segurança e progressão adequada ao nível de experiência informado.`
+  ].join('\n')
+}
+
+export function buildUserPromptForTrainingPlan(input: TrainingPlanRequest) {
+  return [
+    'Gere um plano de treinamento personalizado com base nos dados:',
+    `- Nome: ${input.name}`,
+    `- Idade: ${input.age} anos`,
+    `- Altura: ${input.height} cm`,
+    `- Peso: ${input.weight} kg`,
+    `- Gênero: ${input.gender}`,
+    `- Objetivo de treino: ${input.trainingGoal}`,
+    `- Nível de experiência: ${input.experienceLevel}`,
+    `- Frequência semanal desejada: ${input.trainingFrequency}`,
+    `- Equipamento disponível: ${input.availableEquipment}`,
+    '',
+    'Observação: adapte exercícios e progressões ao nível e equipamento do usuário.'
+  ].join('\n')
 }
