@@ -1,7 +1,14 @@
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import cors from '@fastify/cors'
+import fastifySwagger from '@fastify/swagger'
+import fastifySwaggerUi from '@fastify/swagger-ui'
 import Fastify from 'fastify'
 import { dietPlanRoutes } from './routes/diet-plan'
 import { trainingPlanRoutes } from './routes/training-plan'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const app = Fastify()
 
@@ -18,5 +25,21 @@ app.register(dietPlanRoutes)
 app.register(trainingPlanRoutes)
 
 app.listen({ port: Number(process.env.PORT) || 3333 }).then(() => {
-  console.log('HTTP server running!')
+  console.log('🚀 HTTP server running! 📚 Docs available at http://localhost:3333/docs')
+})
+
+app.register(fastifySwagger, {
+  mode: 'static',
+  specification: {
+    path: path.resolve(__dirname, 'docs', 'openapi.yaml'),
+    baseDir: path.resolve(__dirname, 'docs')
+  }
+})
+
+app.register(fastifySwaggerUi, {
+  routePrefix: '/docs',
+  uiConfig: {
+    docExpansion: 'list'
+  },
+  staticCSP: true
 })

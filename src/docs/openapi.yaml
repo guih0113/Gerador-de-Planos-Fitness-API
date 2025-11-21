@@ -1,0 +1,202 @@
+openapi: 3.0.3
+info:
+  title: Gerador de Dietas e Treinos de Academia com IA - API
+  description: |
+    API que gera planos semanais de dieta e programas de treinamento através de um agente de IA.
+    As respostas dos endpoints que geram planos são transmitidas como stream SSE (`text/event-stream`) contendo texto em Markdown (pt-BR).
+  version: "1.0.0"
+servers:
+  - url: http://localhost:3333
+paths:
+  /test:
+    get:
+      summary: Health check
+      description: Retorna uma mensagem simples para verificar se o servidor está disponível.
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Hello World
+
+  /diet-plan:
+    post:
+      summary: Gerar plano alimentar
+      description: |
+        Recebe dados do usuário e inicia a geração de um plano alimentar semanal.
+        A resposta é enviada como um stream SSE (`text/event-stream`) com trechos de texto em Markdown em português.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DietPlanRequest'
+            example:
+              name: João
+              age: 30
+              height: 175
+              weight: 78
+              activityLevel: 2x_week
+              gender: masculine
+              objective: maintain_weight
+      responses:
+        '200':
+          description: Stream SSE com conteúdo em Markdown (pt-BR)
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: "Chunks do stream SSE — cada chunk é texto em Markdown."
+                example: "data: # Plano semanal\n- Dia 1: ...\n\n"
+        '400':
+          description: Erro de validação do corpo da requisição
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /training-plan:
+    post:
+      summary: Gerar programa de treinamento
+      description: |
+        Recebe dados do usuário e inicia a geração de um programa de treinamento.
+        A resposta é enviada como um stream SSE (`text/event-stream`) com trechos de texto em Markdown em português.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrainingPlanRequest'
+            example:
+              name: Maria
+              age: 28
+              height: 165
+              weight: 60
+              gender: feminine
+              trainingGoal: muscle_gain
+              experienceLevel: beginner
+              trainingFrequency: 3x_week
+              availableEquipment: basic
+      responses:
+        '200':
+          description: Stream SSE com conteúdo em Markdown (pt-BR)
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: "Chunks do stream SSE — cada chunk é texto em Markdown."
+                example: "data: # Programa semanal\n- Sessão 1: ...\n\n"
+        '400':
+          description: Erro de validação do corpo da requisição
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    DietPlanRequest:
+      type: object
+      required: [name, age, height, weight, activityLevel, gender, objective]
+      properties:
+        name:
+          type: string
+          minLength: 3
+          example: João
+        age:
+          type: number
+          minimum: 0
+          example: 30
+        height:
+          type: number
+          minimum: 0
+          description: altura em centímetros
+          example: 175
+        weight:
+          type: number
+          minimum: 0
+          description: peso em quilogramas
+          example: 78
+        activityLevel:
+          type: string
+          enum: [sedentary, 2x_week, 4x_week]
+          description: nível de atividade física
+          example: 2x_week
+        gender:
+          type: string
+          enum: [masculine, feminine]
+          example: masculine
+        objective:
+          type: string
+          enum: [lose_weight, maintain_weight, gain_weight]
+          example: maintain_weight
+
+    TrainingPlanRequest:
+      type: object
+      required: [name, age, gender, height, weight, trainingGoal, experienceLevel, trainingFrequency, availableEquipment]
+      properties:
+        name:
+          type: string
+          minLength: 3
+          example: Maria
+        age:
+          type: number
+          minimum: 0
+          example: 28
+        gender:
+          type: string
+          enum: [masculine, feminine]
+          example: feminine
+        height:
+          type: number
+          minimum: 0
+          description: altura em centímetros
+          example: 165
+        weight:
+          type: number
+          minimum: 0
+          description: peso em quilogramas
+          example: 60
+        trainingGoal:
+          type: string
+          enum: [muscle_gain, fat_loss, maintenance]
+          example: muscle_gain
+        experienceLevel:
+          type: string
+          enum: [beginner, intermediate, advanced]
+          example: beginner
+        trainingFrequency:
+          type: string
+          enum: [3x_week, 4x_week, 5x_week]
+          example: 3x_week
+        availableEquipment:
+          type: string
+          enum: [none, basic, full_gym]
+          description: equipamento disponível para exercícios
+          example: basic
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Validation Error
+        details:
+          type: object
+          description: objetos detalhando os erros de validação quando aplicável
+
+tags: []
