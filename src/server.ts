@@ -40,6 +40,6 @@ app.get('/test', (_req, res) => {
   res.send('Hello World')
 })
 
-app.listen({ port: Number(process.env.PORT) || 3333 }).then(() => {
+app.listen({ port: Number(process.env.PORT) || 3333, host: "0.0.0.0" }).then(() => {
   console.log('🚀 HTTP server running! 📚 Docs available at http://localhost:3333/docs')
 })
