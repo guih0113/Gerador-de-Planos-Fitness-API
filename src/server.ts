@@ -17,16 +17,8 @@ await app.register(cors, {
   methods: ['GET', 'POST']
 })
 
-app.get('/test', (_req, res) => {
-  res.send('Hello World')
-})
-
 app.register(dietPlanRoutes)
 app.register(trainingPlanRoutes)
-
-app.listen({ port: Number(process.env.PORT) || 3333 }).then(() => {
-  console.log('🚀 HTTP server running! 📚 Docs available at http://localhost:3333/docs')
-})
 
 app.register(fastifySwagger, {
   mode: 'static',
@@ -42,4 +34,12 @@ app.register(fastifySwaggerUi, {
     docExpansion: 'list'
   },
   staticCSP: true
+})
+
+app.get('/test', (_req, res) => {
+  res.send('Hello World')
+})
+
+app.listen({ port: Number(process.env.PORT) || 3333 }).then(() => {
+  console.log('🚀 HTTP server running! 📚 Docs available at http://localhost:3333/docs')
 })
