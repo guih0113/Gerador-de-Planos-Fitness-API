@@ -6,7 +6,10 @@ info:
     As respostas dos endpoints que geram planos são transmitidas como stream SSE (`text/event-stream`) contendo texto em Markdown (pt-BR).
   version: "1.0.0"
 servers:
+  - url: https://gerador-de-planos-fitness-api.onrender.com
+    description: Servidor de Produção (Render)
   - url: http://localhost:3333
+    description: Servidor local
 paths:
   /test:
     get:
